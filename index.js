@@ -1,11 +1,15 @@
 import express from "express";
 import bodyParser from "body-parser";
 
+import usersRoutes from "./routes/users.js"
+
 const app = express(); // creates express app
 const PORT = 5000; // defines the port of the application
 
 app.use(bodyParser.json()); // defines that we are going to use json data
 // in our application
+
+app.use("/users", usersRoutes);
 
 app.get('/', (req, res) => {
     console.log('TEST');

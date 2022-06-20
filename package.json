@@ -20,5 +20,8 @@
   "homepage": "https://github.com/brunoedcf/Node_Js_Simple_Express_Web_API#readme",
   "devDependencies": {
     "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
   }
 }
