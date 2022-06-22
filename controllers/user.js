@@ -1,19 +1,24 @@
-import { v4 as uuidv4 } from "uuid"
-
+import axios from "axios"
 let users = [];
 
 export const createUser = (req, res) => {
-
-    const user_id = uuidv4(); // id will never be equal to other user
     const data = req.body;
 
     const user = {
-        id: user_id,
         name: data.name,
-        nickname: data.nickname
+        pokemons: data.pokemons
     };
 
-    users.push(user);
+    axios
+        .post('https://mysterious-shore-05511.herokuapp.com/', user)
+        .then(res => {
+            console.log(`statusCode: ${res.status}`);
+            console.log(res);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
 
     res.send("Ok");
 
