@@ -1,4 +1,5 @@
 import axios from "axios"
+import { response } from "express";
 let users = [];
 
 export const createUser = (req, res) => {
@@ -11,14 +12,8 @@ export const createUser = (req, res) => {
 
     axios
         .post('https://mysterious-shore-05511.herokuapp.com/', user)
-        .then(res => {
-            console.log(`statusCode: ${res.status}`);
-            console.log(res);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-
+        .then(res => { })
+        .catch(error => { });
 
     res.send("Ok");
 
@@ -28,55 +23,102 @@ export const getUser = (req, res) => {
 
     // req.params in dict format
 
-    const user = users.find(user => user.id == req.params["user_id"]);
+    const user_id = req.params["user_id"];
 
-    // .find method returns undefined if nothing has been found
-    if (user == undefined) {
-        res.send("User not Found");
-    }
-    else {
-        res.send(user);
-    }
+
+    const url = 'https://mysterious-shore-05511.herokuapp.com/' + user_id.toString();
+    console.log(url)
+
+    axios
+        .get(url)
+        .then(axios_response => {
+
+            console.log(axios_response.data)
+
+            if (axios_response.data['error']) {
+                res.send({ error: 'Query Error' })
+            }
+            else {
+                const user = {
+                    "id": axios_response.data['data']['id'],
+                    "name": axios_response.data['data']['name'],
+                    "pokemons": axios_response.data['data']['pokemons']
+                };
+                console.log(user)
+                res.send(user)
+            }
+
+        });
 
 }
 
 export const getUsers = (req, res) => {
 
-    res.send(users);
+    const url = 'https://mysterious-shore-05511.herokuapp.com/'
+    console.log(url)
+
+    axios
+        .get(url)
+        .then(axios_response => {
+
+            console.log(axios_response.data)
+
+            if (axios_response.data['error']) {
+                res.send({ error: 'Query Error' })
+            }
+            else {
+                const data = axios_response.data['data']
+                console.log(data)
+                res.send(data)
+            }
+
+        });
 
 }
 
-export const deleteUser = (req, res) => {
+export const deleteUser = () => { };// = (req, res) => {
 
-    // remove the elements that returned false in the function 
-    if (users.find(user => user.id == req.params['user_id']) != undefined) {
-        users = users.filter(user => user.id != req.params['user_id']);
-        res.send(`User ${req.params['user_id']} deleted from users`);
-    }
+//     // remove the elements that returned false in the function 
+//     if (users.find(user => user.id == req.params['user_id']) != undefined) {
+//         users = users.filter(user => user.id != req.params['user_id']);
+//         res.send(`User ${req.params['user_id']} deleted from users`);
+//     }
 
-    else {
-        res.send(`User ${req.params['user_id']} not found`);
-    }
+//     else {
+//         res.send(`User ${req.params['user_id']} not found`);
+//     }
 
-}
+// }
 
 export const updateUser = (req, res) => {
 
-    let user = users.find(user => user.id == req.params['user_id']);
+    const user_id = req.params["user_id"];
 
-    if (user == undefined) {
-        res.send(`User ${req.params['user_id']} not found`);
-    }
-    else {
-        let { id, name, nickname } = req.body
+    const url = 'https://mysterious-shore-05511.herokuapp.com/' + user_id.toString();
 
-        if (id) res.send("Can't modify user Id");
-        else {
-            if (name) user.name = name;
-            if (nickname) user.nickname = nickname;
-            res.send(`User with the id ${req.params['user_id']} has been updated`);
-        }
+    console.log(url)
 
-    }
+    const data = req.body
+
+    console.log(data)
+
+    axios
+        .patch(url, {
+            "name": data.name,
+            "pokemons": data.pokemons
+        })
+        .then(axios_response => {
+
+            console.log(axios_response.data)
+
+            if (axios_response.data['error']) {
+                res.send({ error: 'Query Error' })
+            }
+            else {
+                const data = axios_response.data
+                res.send(data)
+            }
+
+        });
 
 }
