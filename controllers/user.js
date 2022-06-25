@@ -76,19 +76,32 @@ export const getUsers = (req, res) => {
 
 }
 
-export const deleteUser = () => { };// = (req, res) => {
+export const deleteUser = (req, res) => {
 
-//     // remove the elements that returned false in the function 
-//     if (users.find(user => user.id == req.params['user_id']) != undefined) {
-//         users = users.filter(user => user.id != req.params['user_id']);
-//         res.send(`User ${req.params['user_id']} deleted from users`);
-//     }
+    const user_id = req.params["user_id"];
 
-//     else {
-//         res.send(`User ${req.params['user_id']} not found`);
-//     }
+    const url = 'https://mysterious-shore-05511.herokuapp.com/' + user_id.toString();
 
-// }
+    console.log(url)
+
+    axios
+        .delete(url)
+        .then(axios_response => {
+
+            console.log(axios_response.data)
+
+            if (axios_response.data['error']) {
+                res.send({ error: 'Query Error' })
+            }
+            else {
+                const data = axios_response.data
+                res.send(data)
+            }
+
+        });
+
+}
+
 
 export const updateUser = (req, res) => {
 
